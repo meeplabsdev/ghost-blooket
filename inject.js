@@ -7,6 +7,8 @@
     n.remove();
 })();
 (() => {
+    if(document.getElementById('ghost-manager')) return;
+
     let style = document.createElement('style');
     style.innerHTML = (`details > summary {
     cursor: pointer;
@@ -42,6 +44,7 @@ details summary ~ * {
 }`);
 
     const GUI = document.createElement('div');
+    GUI.id = 'ghost-manager';
     GUI.appendChild(style);
     GUI.style.width = '400px';
     //GUI.style.height = '500px';
@@ -83,7 +86,7 @@ details summary ~ * {
     header.style.paddingTop = '2px';
     header.style.fontSize = '1.5rem';
     header.style.textAlign = 'center'
-    header.innerHTML = `Blooket Cheats <span style="font-size: 0.75rem">v4.10.22</span>`;
+    header.innerHTML = `<span style="font-size: 1.5rem">Manager</span>`;
 
     let loop;
 
@@ -150,7 +153,7 @@ details summary ~ * {
     bodyDiv.appendChild(footer);
     footer.style.fontSize = '0.9rem';
     footer.style.paddingBottom = '5px';
-    footer.innerHTML = (`<span>GUI by OneMinesraft2#5394<br>Cheats by <a style="color: lightblue" href="https://twitter.com/glizuwu">gliz</a></span>`);
+    footer.innerHTML = (`<span>Press the gold icon to hide.<br>Blooket Plugin Manager v1.5.0</span>`);
 
     var getValues = () => new Promise((e, t) => {
         try {
@@ -181,7 +184,7 @@ details summary ~ * {
 
     let cheats = {
         global: {
-            'Get Daily Rewards': () => {
+            /*'Get Daily Rewards': () => {
                 fetch("https://api.blooket.com/api/users", { credentials: "include" }).then(x => x.json()).then(x => {
                     getValues().then(async e => {
                         fetch("https://api.blooket.com/api/users/add-rewards", {
@@ -212,14 +215,23 @@ details summary ~ * {
                         }).then(() => alert('Added daily rewawrds!')).catch(() => alert('There was an error when adding rewards!'));;
                     }).catch(() => alert('There was an error encoding requests!'));
                 }).catch(() => alert('There was an error getting username!'));
-            },
-            'Spoof Blooks': () => {
+            },*/
+            /*'Spoof Blooks': () => {
                 if (!window.location.pathname.split('/').includes('lobby')) return alert('You must be in a game lobby! (e.g. https://www.blooket.com/play/lobby)');
                 reactHandler().stateNode.setState({ lockedBlooks: [], takenBlooks: [] });
-            },
+            },*/
             'Toggle Auto Answer': () => { autoAnswer = !autoAnswer },
+            'Answer Current Question': () => {
+                try {
+                Array.from(document.body.querySelectorAll('div[class*="answerText"]')).filter(t => t.firstChild.innerHTML == reactHandler().memoizedState.question.correctAnswers[0])[0].click();
+            } catch {
+                try {
+                    Array.from(document.body.querySelectorAll('div[class*="answerText"]')).filter(t => t.firstChild.innerHTML == reactHandler().memoizedProps.client.question.correctAnswers[0])[0].click();
+                } catch { };
+            }; 
+        },
             'Toggle Highlight Answers': () => { highlightAnswers = !highlightAnswers },
-            'Spam Open Boxes': () => {
+            /*'Spam Open Boxes': () => {
                 let box = prompt(`Which box do you want to open? (e.g. Space)`);
                 let boxes = {
                     safari: 25,
@@ -264,8 +276,8 @@ details summary ~ * {
                         alert(`Results:\n` + Object.entries(count).map((x) => `    ${x[1]} ${x[0]}`).join(`\n`));
                     }).catch(() => alert('There was an error encoding requests!'));
                 }).catch(() => alert('There was an error getting username!'));
-            },
-            'Auto Sell Dupes': () => {
+            },*/
+            /*'Auto Sell Dupes': () => {
                 fetch("https://api.blooket.com/api/users", { credentials: "include" }).then(x => x.json()).then(x => {
                     let blooks = Object.entries(x.unlocks).map(x => [x[0], x[1] - 1]).filter(x => x[1] > 0);
                     let wait = ms => new Promise(r => setTimeout(r, ms));
@@ -292,7 +304,7 @@ details summary ~ * {
                         alert(`Results:\n` + blooks.map((x) => `    ${x[1]} ${x[0]}`).join(`\n`));
                     }).catch(() => alert('There was an error encoding requests!'));
                 }).catch(() => alert('There was an error getting user data!'));
-            }
+            }*/
         },
         cafe: {
             'Infinite Food': () => {
@@ -407,6 +419,48 @@ details summary ~ * {
                 reactHandler().stateNode.setState({ gold2: gold, gold });
             },
             'Chest ESP': () => { chestESP = !chestESP },
+            'View Current Chests': () => {
+                try {
+                if (reactHandler().stateNode.state.stage == 'prize') {
+                    let { choices } = reactHandler().stateNode.state;
+                    let div = document.querySelector("div[class*='regularBody']").children[1];
+                    if (div) {
+                        if (!document.querySelectorAll(".chest-esp").length) choices.forEach((box, i) => {
+                            textElement = document.createElement('p');
+                            textElement.className = "chest-esp";
+                            textElement.innerText = box.text;
+                            textElement.style = `text-align: center;
+                    font-size: 30px;
+                    color: white;
+                    font-family:Titan One;
+                    sans-serif;
+                    border-color: black;
+                    margin-top: 200px;`
+                            try { div.children[i].appendChild(textElement); } catch (e) { console.log(e) }
+                        });
+                        else choices.forEach((box, i) => {
+                            if (div.children.length == 3 && div.children[i].children[1].innerText != box.text) div.children[i].children[1].innerText = box.text;
+                        })
+                    }
+                }
+            } catch (e) { console.log(e) }
+        },
+            'All Gold Zero': () => { 
+                reactHandler().memoizedState.players.forEach((player, index) => {
+                    let e = reactHandler(),
+                    amount = Number(parseFloat(50));
+                e.memoizedProps.firebase.setVal({
+                    id: e.memoizedProps.client.hostId,
+                    path: "c/" + e.memoizedProps.client.name,
+                    val: {
+                        b: e.memoizedProps.client.blook,
+                        g: e.stateNode.state.gold,
+                        tat: player + ":swap:" + amount
+                    }
+                })
+
+                });
+             },
             "Set Player's Gold": () => {
                 let e = reactHandler(),
                     player = prompt("Player to set gold"),
@@ -545,7 +599,7 @@ details summary ~ * {
                 } catch { };
             };
         };
-        if (highlightAnswers) {
+        if (highlightAnswers && !GUI.hidden) {
             try {
                 Array.from(document.querySelector('div[class*="answersHolder"').children).forEach(x => {
                     if (reactHandler().memoizedState.question.correctAnswers.includes(x.innerText) || reactHandler().memoizedProps.client.question.correctAnswers.includes(x.innerText)) x.firstChild.style = 'background-color: rgb(0, 207, 119);';
@@ -555,7 +609,7 @@ details summary ~ * {
         };
         if (curPage == 'kingdom') {
             Array.from(document.getElementsByClassName('choiceESP')).forEach(x => x.remove())
-            if (choiceESP) {
+            if (choiceESP && !GUI.hidden) {
                 try {
                     let elements = {
                         materials: Array.from(document.querySelectorAll('div')).find(x => Array.from(x.children).find(e => e.className.includes('tree'))),
@@ -583,11 +637,11 @@ details summary ~ * {
                 } catch (e) { }
             };
         }
-        if (curPage == 'crypto' && autoPassword) {
+        if (curPage == 'crypto' && autoPassword && !GUI.hidden) {
             let { stage, correctPassword } = Object.values(document.querySelector('#app > div > div'))[1].children[1]._owner.stateNode.state;
             if (stage == "hack") Array.from(document.querySelectorAll('div')).filter(x => x.innerHTML == correctPassword)[0].click();
         };
-        if (curPage == 'gold' && chestESP) {
+        if (curPage == 'gold' && chestESP && !GUI.hidden) {
             try {
                 if (reactHandler().stateNode.state.stage == 'prize') {
                     let { choices } = reactHandler().stateNode.state;
@@ -613,7 +667,7 @@ details summary ~ * {
                 }
             } catch (e) { console.log(e) }
         };
-    });
+    }, 5);
 
     let curPage = getSite();
     if (curPage && cheats[curPage]) Object.keys(cheats[curPage]).forEach(cheat => {
@@ -652,4 +706,7 @@ details summary ~ * {
         e.code == 'KeyE' && (GUI.hidden = !GUI.hidden)
     };
     addEventListener('keypress', toggleHidden);
+    document.getElementsByTagName("img")[0].onclick = () => { 
+        GUI.hidden = !GUI.hidden;
+    }
 })()
