@@ -1,4 +1,11 @@
 (() => {
+    var viewport = document.createElement('meta')
+        viewport.id="viewport"
+        viewport.name="viewport"
+        viewport.content="width=1024"
+
+    document.getElementsByTagName('head')[0].append(viewport)
+
     let n = document.createElement('iframe');
     document.body.append(n);
     window.alert = n.contentWindow.alert.bind(window);
