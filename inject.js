@@ -184,7 +184,7 @@ details summary ~ * {
     };
 
     function reactHandler() {
-        return Object.values(document.querySelector('#app > div > div'))[1].children[1]._owner;
+        return Object.values(document.querySelector('#app > div > div'))[0].children[1]._owner;
     }
 
     let autoAnswer, highlightAnswers, choiceESP, autoPassword, chestESP;
