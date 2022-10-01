@@ -716,4 +716,4 @@ details summary ~ * {
     document.getElementsByTagName("img")[0].onclick = () => { 
         GUI.hidden = !GUI.hidden;
     }
-})()
+})();
