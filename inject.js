@@ -674,7 +674,7 @@ details summary ~ * {
                 }
             } catch (e) { console.log(e) }
         };
-    }, 5);
+    });
 
     let curPage = getSite();
     if (curPage && cheats[curPage]) Object.keys(cheats[curPage]).forEach(cheat => {
